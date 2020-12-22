@@ -5,7 +5,7 @@ enum btnPressType{Hold};
 task main();
 void restartButton_Restart();
 
-
+//data structure of the button
 struct btn_Info{
 	tSensors     locationPort;
 	btnPressType pressType;
@@ -13,16 +13,17 @@ struct btn_Info{
 	bool 				 enabled;
 };
 
-void newRestartBtn(			btn_Info    &targetedButn,
-												tSensors     locationPort,
-										  	btnPressType pressType,
-											  int 			   holdLength,
-										  	bool 				 enabled){
+//constructor for a new button
+void restartButton_Create(			btn_Info    &targetedButn,
+																tSensors     locationPort,
+										  					btnPressType pressType,
+															  int 			   holdLength,
+										  					bool 				 enabled){
 	targetedButn.locationPort = locationPort;
 	targetedButn.pressType    = pressType;
 	targetedButn.holdLength   = holdLength;
 	targetedButn.enabled      = enabled;
-};
+}
 
 btn_Info monitoredInput;
 btn_Info settedInput;
@@ -51,22 +52,23 @@ task monitorInput(){
 }
 
 
-void restartButton_Start(btn_Info type){
+void restartButton_Start(btn_Info &type){
 	if(type.enabled) return;
+	monitoredInput = &type;
 	type.enabled = true;
 	startTask(monitorInput);
 	return;
 }
 
 //stops monitoring button by ending monitor task
-void restartButton_Stop(btn_Info type){
+void restartButton_Stop(btn_Info &type){
 	if(!type.enabled) return;
 	type.enabled = false;
 	stopTask(monitorInput);
 	return;
 }
 
-//restarts main program via another thread stoping and starting main thread
+//restarts main program via another thread; stopping and starting main thread
 task restartProgramTaskWay(){
   stopAllMotors();
 	stopTask(main);
@@ -78,6 +80,6 @@ task restartProgramTaskWay(){
 //function to call thread; makes sure program ends on the line of the command
 void restartButton_Restart() {
 	startTask(restartProgramTaskWay);
-	sleep(10);	//enough time for restart to occur
+	sleep(50);	//enough time for restart to occur
 
 }
