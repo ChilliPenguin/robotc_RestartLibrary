@@ -1,10 +1,6 @@
 int reset_Period = 1250;
 enum btnPressType{Hold};
 
-//precalls functions and tasks
-task main();
-void restartButton_Restart();
-
 //data structure of the button
 struct restartButton_Info{
 	tSensors     locationPort;
@@ -15,6 +11,13 @@ struct restartButton_Info{
 	unsigned int monitorInformation; //aaaaabc, a-timeheld, b-pressedBefore, c-pressedNow
 };
 
+//precalls functions and tasks
+task main();
+void restartButton_Restart();
+void restartButton_Start(restartButton_Info &type);
+void restartButton_Stop(restartButton_Info &type);
+
+
 //------------------------------------------------------------------------------
 //Constructor of struct
 //------------------------------------------------------------------------------
@@ -24,6 +27,8 @@ void restartButton_Create(restartButton_Info &targetedButn, tSensors locationPor
 	targetedButn.pressType    = pressType;
 	targetedButn.holdLength   = holdLength;
 	targetedButn.enabled      = enabled;
+	if(enabled) restartButton_Start(targetedButn);
+	else restartButton_Stop(targetedButn);
 }
 
 restartButton_Info monitoredInput;
